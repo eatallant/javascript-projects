@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<!--
+Author: Eric Tallant
+
+comments: This is a single screen application to demonstrate some mousemove events in javascript
+            Use the mouse to push around the eggs
+
+-->
+
+<html lang = "en">
+    
+    <head>
+        <meta charset = "utf-8">
+        
+        <title>Egg Hunt</title>
+        
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+       
+      
+        <!-- for the sake of simplicity in this project, all css is here -->
+        <style type="text/css">
+            html, body {
+                margin:0;
+                height:100%;
+                cursor: grab;
+                overflow: hidden;
+                user-select: none;
+                -moz-user-select:none;
+            }
+            body:active {
+                cursor:grabbing;
+            }
+            #game-container {
+                
+                margin:0;
+                min-width: 100vw;
+                min-height:100vh;
+                max-height: 100vh;
+                overflow: hidden;
+            }
+            #intro {
+                color:#333;
+                font-size: 2.5em;
+                position: absolute;
+                margin-top:10%;
+                width:100%;
+                text-align: center;
+                
+            }
+            .bubble {
+                height:40px;
+                width:40px;
+                border-radius: 50%;
+                box-shadow: 0px 0px 6px #999;
+                background-color:red;
+            }
+            .egg {
+                display: inline-block; 
+                width: 42px; 
+                height: 55px; 
+                
+                border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+                box-shadow: 0px 0px 4px #555;
+                
+                position:absolute;
+                max-height: 100%;
+                overflow-y: auto;
+                overflow: visible;
+                margin-left:10px;
+                margin-top:14px;
+            }
+            .eggStatement {
+                text-align: center;
+                margin-top: -30px;
+                visibility: hidden;
+                white-space: nowrap;
+                z-index: 6;
+            }
+            
+            .eggContainer {
+                position:relative;
+                display: inline-block; 
+                
+                width: 63px; 
+                height: 85px; 
+/*                border: 1px dashed black;*/
+/*                border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;*/
+                
+            }
+        </style>
+
+        
+    </head>
+
+    <body>
+        
+        <div id="intro"><h2>get the eggs before the other kids do!</h2></div>
+        
+        <div id="game-container">
+            
+            
+            
+            
+            
+        
+        </div>
+       
+        
+       
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+        
+        <script type="text/javascript">
+            
+            //get viewport size
+            let screenHeight = document.documentElement.clientHeight, 
+                screenWidth = document.documentElement.clientWidth;
+            
+            //egg statement array
+            let eggStatement = ["Please no!", "I have 3 children!", "Call the police!", "I don't have any money!", "Get away!", "AHHH!", "What is happening?!", "Easy Pal", "Leave me be!", "Egg abuse!", "It hurts!", "I'm being attacked!"]
+            
+            
+            //create egg div and place in container with random margins
+            function generateDivs(amount) {
+                //amount of generated divs
+                const numberOfDivs = amount;
+                
+                for(var i = 0; i < amount; i++) {
+                    $('#game-container').append('<div class="eggContainer" style=" top: ' + randomPositionY() + 'px; left: ' + randomPositionX() + 'px;"><div class="egg" style="background-color:' + randomColor() + ';">' +
+                                                    '<p class="eggStatement"></p>' +
+                                                '</div></div>');
+                }
+            }
+            
+            
+            
+            /*
+            * RANDOM GENERATORS
+            */
+            
+            function randomNumber(min, max) {
+                let number = Math.floor(Math.random() * (max - min )) + min;
+                return number;
+            }
+            function randomPositionY() {
+                let chooseMarginTop = randomNumber(-100, screenHeight - 100);
+                
+                return chooseMarginTop;
+            }
+            function randomPositionX() {
+                let chooseMarginLeft = randomNumber(-100, screenWidth - 100);
+                
+                return chooseMarginLeft
+            }
+            
+            function randomColor() {
+                let randomColor = '#' + Math.random().toString(16).substr(-6);
+                return randomColor;
+            }
+            
+            function randomArrayIndex(arr) {
+                return arr[randomNumber(0, arr.length)];
+            }
+            
+            /*
+            * IIFEs
+            */
+            
+            //generate eggs
+            (function () {
+                generateDivs(50);
+            })();
+            
+            
+            
+            /*
+            * EGG CHASE
+            */
+            
+            $('.eggContainer').on('mouseenter', function() {
+                $(this).find($('.eggStatement')).css('visibility', 'visible');
+                $(this).find($('.eggStatement')).html(randomArrayIndex(eggStatement));
+            });
+            $('.eggContainer').on('mouseout', function() {
+                $(this).find($('.eggStatement')).css('visibility', 'hidden');
+                $(this).find($('.eggStatement')).html(" ");
+            });
+            
+            
+            
+            
+            $(document).on('mousemove', '.eggContainer', function(e) {
+               var offset = $(this).offset()
+                    ,x1 = offset.left - 10
+                    ,x2 = offset.left + $(this).width() + 20
+                    ,y1 = offset.top
+                    ,y2 = offset.top + $(this).height()
+                    ,marginLeft = $(this).css("margin-left")
+                    ,marginTop = $(this).css("margin-top")
+                    ,center, mousePos
+                ; 
+
+                
+                if(e.pageX > x1) {
+                    
+                }
+                
+                
+                if(e.pageX > x1 && e.pageX < x2 && e.pageY > y1 && e.pageY < y2) {
+                    center = (x2 - x1) / 2;
+                    mousePos = e.pageX - x1;
+                    if(mousePos < center) {
+                        
+                        $(this).css("left", "+=4px");
+                       
+                    } else {
+
+                        $(this).css("left", '-=4px');
+                        
+                    }
+
+                    center = (y2 - y1) / 2;
+                    mousePos = e.pageY - y1;
+                    if(mousePos < center) {
+                        $(this).css("top", "+=4px");
+                    } else {
+                        $(this).css("top", "-=4px");
+                    }
+                }
+
+                
+            });
+            
+            
+            
+        </script>
+        
+    </body>
+    
+</html>
